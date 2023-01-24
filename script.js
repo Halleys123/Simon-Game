@@ -4,12 +4,12 @@ window.addEventListener("load", (e) => {
   const btn2 = document.querySelector(".btn2");
   const btn3 = document.querySelector(".btn3");
   const btn0 = document.querySelector(".btn0");
+  const points = document.querySelector(".points");
 
   let colors = ["red", "green", "purple", "yellow"];
   let orderArr = [];
   let arr = [];
   let score = 0;
-  let startCount = 0;
   let j = 0;
 
   function reset() {
@@ -17,19 +17,27 @@ window.addEventListener("load", (e) => {
     btn2.style.backgroundColor = "#555555";
     btn3.style.backgroundColor = "#555555";
     btn0.style.backgroundColor = "#555555";
-    startCount = 0;
     j = 0;
+    orderArr = [];
   }
-
+  function check() {
+    if (orderArr.length == arr.length) {
+      if (JSON.stringify(orderArr) == JSON.stringify(arr)) {
+        score = score + 1;
+      } else {
+        score = score - 1;
+      }
+      points.innerHTML = `${score}`;
+      reset();
+    }
+  }
   function start() {
     reset();
-    startCount = 1;
     arr = [];
     let i = 0;
-
     while (arr.length != 4) {
       let a = Math.floor(Math.random() * 4);
-      if (!arr.includes(a)) arr.push(a);
+      if (!arr.includes(a.toString())) arr.push(a.toString());
     }
 
     const time = setInterval((e) => {
@@ -43,35 +51,21 @@ window.addEventListener("load", (e) => {
     setTimeout(() => {
       reset();
     }, 3000);
+    console.log(arr);
   }
 
   reset();
 
-  document.addEventListener("keydown", (e) => {
+  document.addEventListener("keypress", (e) => {
     if (e.key == "s" || "S") start();
     if (e.key == "r" || "R") reset();
   });
 
   btns.addEventListener("click", (e) => {
-    console.log(this);
-    if (orderArr.length == 4) {
-      if (orderArr != arr) {
-        orderArr = [];
-        score = score - 1;
-        reset();
-        console.log(score);
-      }
-      if (orderArr == arr) {
-        score = score + 1;
-      }
-    } else {
-      if (startCount) {
-        orderArr.push(e.target.id);
-        e.target.style.backgroundColor = `${colors[j]}`;
-        j++;
-        console.log(orderArr);
-        console.log(score);
-      }
-    }
+    orderArr.push(e.target.id);
+    e.target.style.backgroundColor = `${colors[j]}`;
+    j++;
+    console.log(orderArr);
+    check();
   });
 });
